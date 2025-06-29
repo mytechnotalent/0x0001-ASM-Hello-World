@@ -1,23 +1,30 @@
-;===============================================================================
+;==============================================================================
 ; File:     main.asm
-; Purpose:  CRT-free 64-bit EXE that displays a message box via Ui.asm helper.
-;===============================================================================
+;
+; Purpose:  0x0001-ASM-Hello-World Windows App written in Assembler.
+;
+; Platform: Windows x64
+; Author:   Kevin Thomas
+; Date:     2025-06-28
+; Updated:  2025-06-28
+;==============================================================================
 
-extrn   UI_ShowMessage :PROC
+extrn  UIMessageBox :PROC
 
 .data
-    msgText    db "Hello World", 0
-    msgTitle   db "Lean Loader", 0
+       msgText  db "Hello World", 0
+       msgTitle db "Lean Loader", 0
 
 .code
+
+;------------------------------------------------------------------------------
+; WinMainCRTStartup PROC main entry point
+;------------------------------------------------------------------------------
 WinMainCRTStartup PROC
-
-
-    lea     rcx, msgText         ; RCX = &"Hello World"
-    lea     rdx, msgTitle        ; RDX = &"Lean Loader"
-    call    UI_ShowMessage       ; loads DLL, shows box, unloads DLL
-
-    ret
+  LEA    RCX, msgText             ; RCX = &"Hello World"
+  LEA    RDX, msgTitle            ; RDX = &"Lean Loader"
+  CALL   UIMessageBox             ; call the UIMessageBox function
+  RET                             ; return to the OS
 WinMainCRTStartup ENDP
 
-END                             ; end of main.asm
+END                               ; end of main.asm

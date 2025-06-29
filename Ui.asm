@@ -1,78 +1,66 @@
 ;==============================================================================
 ; File:     Ui.asm
-; Purpose:  CRT-free helper DLL loader and invoker for UIMessageBox
 ;
-; Exports:
-;   UI_ShowMessage(lpText, lpCaption) : int
-;     - Loads UiDll.dll
-;     - Resolves UIMessageBox
-;     - Calls UIMessageBox(lpText, lpCaption)
-;     - Unloads UiDll.dll
-;     - Returns IDOK (1) when the user clicks OK
+; Purpose:  UI Windows wrapper functionality written in Assembler.
 ;
-; Calling Convention: Microsoft x64
-;   RCX = lpText    ; pointer to null-terminated text string
-;   RDX = lpCaption ; pointer to null-terminated caption string
-;   Caller must reserve 32-byte shadow space on the stack
+; Platform: Windows x64
+; Author:   Kevin Thomas
+; Date:     2025-06-28
+; Updated:  2025-06-28
 ;==============================================================================
 
-extrn   LoadLibraryA    :PROC    ; kernel32.dll
-extrn   GetProcAddress  :PROC    ; kernel32.dll
-extrn   FreeLibrary     :PROC    ; kernel32.dll
+extrn   LoadLibraryA   :PROC      ; kernel32.dll
+extrn   GetProcAddress :PROC      ; kernel32.dll
+extrn   FreeLibrary    :PROC      ; kernel32.dll
 
-includelib kernel32.lib          ; import stubs for loader APIs
-
-public  UI_ShowMessage
+public  UIMessageBox
 
 .data
-dllName   db "UiDll.dll",     0
-procName  db "UIMessageBox",  0
+        dllName          db "UiDll.dll",    0
+        procUIMessageBox db "UIMessageBox", 0
 
 .code
 
 ;------------------------------------------------------------------------------
-; Function: UI_ShowMessage
-; Prototype:
-;   int UI_ShowMessage(
-;       LPCSTR lpText,      ; RCX
-;       LPCSTR lpCaption    ; RDX
-;   );
+; UIMessageBox PROC implementation wrapper for MessageBoxA
 ;
-; Behavior:
-;   1) LoadLibraryA("UiDll.dll")
-;   2) GetProcAddress(hMod, "UIMessageBox")
-;   3) Call UIMessageBox(lpText, lpCaption)
-;   4) FreeLibrary(hMod)
-;   5) Return value from MessageBoxA (IDOK=1)
+; int MessageBoxA(
+;   [in, optional] HWND   hWnd,
+;   [in, optional] LPCSTR lpText,
+;   [in, optional] LPCSTR lpCaption,
+;   [in]           UINT   uType
+; );
+;
+; Parameters:
+;   RCX = LPCSTR lpText
+;   RDX = LPCSTR lpCaption
+;
+; Return:
+;   IDOK = 1 - The OK button was selected.
 ;------------------------------------------------------------------------------
-UI_ShowMessage PROC lpText:QWORD, lpCaption:QWORD
-    ; save user arguments
-    mov     rsi, rcx            ; rsi = lpText
-    mov     rdi, rdx            ; rdi = lpCaption
+UIMessageBox PROC lpText:QWORD, lpCaption:QWORD
+_UIMessageBox_Prologue:
+  MOV    RSI, RCX                 ; RSI = preserve lpText
+  MOV    RDI, RDX                 ; RDI = preserve lpCaption
+  SUB    RSP, 28h                 ; reserve 32-byte shadow space, +8 16-b align 
+_UIMessageBox_LoadDLL:
+  LEA    RCX, dllName             ; RCX = address of UiDll.dll
+  CALL   LoadLibraryA             ; call Win32 API
+  MOV    RBX, RAX                 ; save module handle
+_UIMessageBox_ResolveExport:
+  MOV    RCX, RBX                 ; RCX = module handle
+  LEA    RDX, procUIMessageBox    ; RDX = address of UIMessageBox
+  CALL   GetProcAddress           ; call Win32 API
+_UIMessageBox_InvokeExport:
+  MOV   RCX, RSI			      ; RCX = lpText
+  MOV   RDX, RDI			      ; RDX = lpCaption
+  CALL  RAX                       ; call the resolved UIMessageBox function
+_UIMessageBox_UnloadDLL:
+  MOV   RCX, RBX                  ; RCX = module handle
+  CALL  FreeLibrary               ; call Win32 API
+_UIMessageBox_Epilogue:
+  ADD   RSP, 28h                  ; restore 32-byte shadow space, +8 16-b align
+  ret                             ; return to caller
+UIMessageBox ENDP
 
-    sub     rsp,28h             ; reserve 32-byte shadow space
-
-    ; load the DLL
-    lea     rcx, dllName        ; RCX = address of "UiDll.dll"
-    call    LoadLibraryA        ; RAX = module handle
-    mov     rbx, rax            ; save module handle
-
-    ; resolve the export
-    mov     rcx, rbx            ; RCX = module handle
-    lea     rdx, procName       ; RDX = address of "UIMessageBox"
-    call    GetProcAddress      ; RAX = address of UIMessageBox
-
-    ; invoke the export
-    mov     rcx, rsi            ; RCX = lpText
-    mov     rdx, rdi            ; RDX = lpCaption
-    call    rax                 ; call UIMessageBox
-
-    ; unload the DLL
-    mov     rcx, rbx            ; RCX = module handle
-    call    FreeLibrary
-
-    add     rsp,28h             ; restore shadow space
-    ret                         ; RAX holds IDOK
-UI_ShowMessage ENDP
-
-END                             ; end of Ui.asm
+END                               ; end of Ui.asm
