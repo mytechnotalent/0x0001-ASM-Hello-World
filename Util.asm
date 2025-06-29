@@ -38,7 +38,7 @@ _UtilExitProcess_CallFunction:
   CALL   ExitProcess              ; call Win32 API
 _UtilExitProcess_Epilogue:
   ADD   RSP, 28h                  ; restore 32-byte shadow space, +8 16-b align
-  ret                             ; return to caller
+  RET                             ; return to caller
 UtilExitProcess ENDP
 
 END                               ; end of Util.asm

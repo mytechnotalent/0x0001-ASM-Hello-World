@@ -60,7 +60,7 @@ _UIMessageBox_UnloadDLL:
   CALL  FreeLibrary               ; call Win32 API
 _UIMessageBox_Epilogue:
   ADD   RSP, 28h                  ; restore 32-byte shadow space, +8 16-b align
-  ret                             ; return to caller
+  RET                             ; return to caller
 UIMessageBox ENDP
 
 END                               ; end of Ui.asm
