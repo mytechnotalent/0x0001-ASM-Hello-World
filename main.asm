@@ -9,7 +9,8 @@
 ; Updated:  2025-06-28
 ;==============================================================================
 
-extrn  UIMessageBox :PROC
+extrn  UIMessageBox    :PROC
+extrn  UtilExitProcess :PROC
 
 .data
        msgText  db "Hello World", 0
@@ -23,8 +24,8 @@ extrn  UIMessageBox :PROC
 WinMainCRTStartup PROC
   LEA    RDX, msgTitle            ; RDX = &"Lean Loader"
   LEA    RCX, msgText             ; RCX = &"Hello World"
-  CALL   UIMessageBox             ; call the UIMessageBox function
-  RET                             ; return to the OS
+  CALL   UIMessageBox             ; call the UIMessageBox subroutine
+  CALL   UtilExitProcess          ; call the UtilExitProcess subroutine
 WinMainCRTStartup ENDP
 
 END                               ; end of main.asm

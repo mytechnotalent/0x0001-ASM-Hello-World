@@ -21,5 +21,8 @@
     <MASM Include="Ui.asm">
       <Filter>Source Files</Filter>
     </MASM>
+    <MASM Include="Util.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
   </ItemGroup>
 </Project>
