@@ -21,8 +21,8 @@ extrn  UIMessageBox :PROC
 ; WinMainCRTStartup PROC main entry point
 ;------------------------------------------------------------------------------
 WinMainCRTStartup PROC
-  LEA    RCX, msgText             ; RCX = &"Hello World"
   LEA    RDX, msgTitle            ; RDX = &"Lean Loader"
+  LEA    RCX, msgText             ; RCX = &"Hello World"
   CALL   UIMessageBox             ; call the UIMessageBox function
   RET                             ; return to the OS
 WinMainCRTStartup ENDP
