@@ -1,4 +1,4 @@
-<img src="https://github.com/mytechnotalent/0x0000-ASM-Hello-World/blob/master/0x0001-ASM-Hello-World.png?raw=true">
+<img src="https://github.com/mytechnotalent/0x0001-ASM-Hello-World/blob/master/0x0001-ASM-Hello-World.png?raw=true">
 
 ## FREE Reverse Engineering Self-Study Course [HERE](https://github.com/mytechnotalent/Reverse-Engineering-Tutorial)
 
