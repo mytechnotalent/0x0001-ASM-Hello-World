@@ -9,7 +9,7 @@
 
 <br>
 
-## Code
+# Code
 ```
 ;==============================================================================
 ; File:     main.asm
@@ -159,14 +159,15 @@ UIMessageBox ENDP
 
 END                               ; end of Ui.asm
 ```
-<br>
-
-## Comprehensive Deep Dive Supplemental Material
-### Windows Internals Crash Course by Duncan Ogilvie
-#### [SLIDES](https://mrexodia.github.io/files/wicc-2023-slides.pdf)
-#### [VIDEO](https://youtu.be/I_nJltUokE0?si=Q1yOfZuIF5jOa_2U)
 
 <br>
 
-## License
+# Comprehensive Deep Dive Supplemental Material
+## Windows Internals Crash Course by Duncan Ogilvie
+### [SLIDES](https://mrexodia.github.io/files/wicc-2023-slides.pdf)
+### [VIDEO](https://youtu.be/I_nJltUokE0?si=Q1yOfZuIF5jOa_2U)
+
+<br>
+
+# License
 [MIT](https://github.com/mytechnotalent/0x0001-ASM-Hello-World/blob/master/LICENSE.txt)
